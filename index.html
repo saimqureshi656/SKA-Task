@@ -149,6 +149,17 @@
     .btn.loading .spin { display: block; }
     @keyframes rot { to { transform: rotate(360deg); } }
 
+    .btn.ghost { background: transparent; color: var(--ink); border: 1px solid var(--lighttan); margin-top: 16px; }
+    .btn.ghost:hover { background: #FBF9F5; border-color: var(--tan); }
+    .formfoot { text-align: center; margin-top: 18px; }
+    .backlink {
+      font-size: 13px; color: var(--tan);
+      background: none; border: none; cursor: pointer;
+      font-family: 'Roboto', sans-serif; letter-spacing: 0.02em;
+      padding: 4px 8px; transition: color 0.15s var(--ease);
+    }
+    .backlink:hover { color: var(--ink); }
+
     .msg { font-size: 13px; margin-top: 16px; padding: 11px 14px; border-radius: 8px; display: none; line-height: 1.5; }
     .msg.show { display: block; animation: rise 0.3s var(--ease) both; }
     .msg.error { background: rgba(181,96,14,0.10); color: var(--amber); border-left: 3px solid var(--amber); }
@@ -250,6 +261,7 @@
 
           <button class="btn" id="submit"><span class="label">Submit responses</span><span class="spin"></span></button>
           <div class="msg error" id="formError"></div>
+          <div class="formfoot"><button type="button" class="backlink" id="back">← Use a different code</button></div>
         </div>
 
         <!-- Pane 3: success -->
@@ -260,6 +272,7 @@
           </svg>
           <h2>Responses received</h2>
           <p>Thank you. The SKA team has your submission.</p>
+          <button class="btn ghost" id="again">Submit another response</button>
         </div>
       </div>
     </div>
@@ -297,6 +310,41 @@
       }
     }
 
+    // ---- Reset / navigation helpers ----
+    function resetForm() {
+      $("name").value = "";
+      $("org").value = "";
+      $("comm").selectedIndex = 0;
+      const btn = $("submit");
+      btn.disabled = false;
+      btn.classList.remove("loading");
+      $("formError").classList.remove("show");
+    }
+
+    function showSuccess() {
+      // restart the checkmark draw animation each time
+      $("successCard").querySelectorAll(".ring, .tick").forEach((el) => {
+        el.style.animation = "none";
+        void el.offsetHeight; // force reflow
+        el.style.animation = "";
+      });
+      swapPane($("formCard"), $("successCard"));
+    }
+
+    // Back to the access-code screen from the form
+    $("back").addEventListener("click", () => {
+      resetForm();
+      $("s2").classList.remove("on");
+      $("code").value = "";
+      swapPane($("formCard"), $("gate"), () => $("code").focus());
+    });
+
+    // Submit another response from the success screen
+    $("again").addEventListener("click", () => {
+      resetForm();
+      swapPane($("successCard"), $("formCard"), () => $("name").focus());
+    });
+
     // ---- Submit ----
     $("submit").addEventListener("click", async () => {
       const name = $("name").value.trim();
@@ -324,7 +372,7 @@
         const data = await res.json();
 
         if (res.ok && data.ok) {
-          swapPane($("formCard"), $("successCard"));
+          showSuccess();
         } else {
           formError.textContent = data.error || "Something went wrong. Please try again.";
           formError.classList.add("show");
