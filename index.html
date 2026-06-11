@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Thrive by Design — Diagnostic Access</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Spectral:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --ink: #2E2B29; --brown: #5A5550; --tan: #9E8E7A;
+      --lighttan: #C4B9A8; --cream: #D9D0BF; --offwhite: #F4F0E8;
+      --white: #FFFFFF; --green: #2D6A4F; --amber: #B5600E;
+      --shadow: 0 1px 2px rgba(46,43,41,0.04), 0 12px 32px -12px rgba(46,43,41,0.18);
+      --ease: cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
+    body {
+      font-family: 'Roboto', sans-serif;
+      color: var(--ink);
+      line-height: 1.6;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      background:
+        radial-gradient(120% 90% at 50% -10%, #FBF8F2 0%, var(--offwhite) 55%, #EDE6DA 100%);
+    }
+
+    /* ---- ambient background ---- */
+    .ambient { position: fixed; inset: -12%; overflow: hidden; z-index: 0; pointer-events: none; }
+    .orb { position: absolute; border-radius: 50%; filter: blur(55px); mix-blend-mode: multiply; will-change: transform; }
+    .orb.a { width: 460px; height: 460px; left: -100px; top: -120px;
+      background: radial-gradient(circle at 35% 35%, rgba(158,142,122,0.9), rgba(158,142,122,0) 68%);
+      animation: floatA 14s var(--ease) infinite alternate; }
+    .orb.b { width: 400px; height: 400px; right: -120px; top: 4%;
+      background: radial-gradient(circle at 35% 35%, rgba(181,96,14,0.42), rgba(181,96,14,0) 68%);
+      animation: floatB 18s var(--ease) infinite alternate; }
+    .orb.c { width: 540px; height: 540px; left: 4%; bottom: -220px;
+      background: radial-gradient(circle at 35% 35%, rgba(196,185,168,0.85), rgba(196,185,168,0) 68%);
+      animation: floatC 16s var(--ease) infinite alternate; }
+    .orb.d { width: 360px; height: 360px; right: 8%; bottom: -120px;
+      background: radial-gradient(circle at 35% 35%, rgba(45,106,79,0.4), rgba(45,106,79,0) 68%);
+      animation: floatB 21s var(--ease) infinite alternate-reverse; }
+    .orb.e { width: 300px; height: 300px; left: 40%; top: 26%;
+      background: radial-gradient(circle at 35% 35%, rgba(158,142,122,0.6), rgba(158,142,122,0) 68%);
+      animation: floatA 19s var(--ease) infinite alternate-reverse; }
+    .orb.f { width: 320px; height: 320px; left: 58%; bottom: 6%;
+      background: radial-gradient(circle at 35% 35%, rgba(217,208,191,0.8), rgba(217,208,191,0) 68%);
+      animation: floatC 23s var(--ease) infinite alternate-reverse; }
+    @keyframes floatA { from { transform: translate(0,0) rotate(0deg) scale(1); } to { transform: translate(220px,150px) rotate(45deg) scale(1.3); } }
+    @keyframes floatB { from { transform: translate(0,0) rotate(0deg) scale(1); } to { transform: translate(-200px,120px) rotate(-40deg) scale(1.25); } }
+    @keyframes floatC { from { transform: translate(0,0) rotate(0deg) scale(1); } to { transform: translate(160px,-180px) rotate(35deg) scale(1.28); } }
+
+    /* ---- top brand strip ---- */
+    .topbar { position: relative; z-index: 1; padding: 22px 0; }
+    .bar-inner {
+      max-width: 1080px; margin: 0 auto; padding: 0 28px;
+      display: flex; align-items: center; gap: 12px;
+    }
+    .mark { width: 30px; height: 30px; flex-shrink: 0; }
+    .brand h1 { font-size: 13px; font-weight: 700; letter-spacing: 0.05em; color: var(--ink); line-height: 1.2; }
+    .brand p { font-size: 11px; font-style: italic; color: var(--tan); margin-top: 1px; }
+
+    /* ---- stage ---- */
+    main { position: relative; z-index: 1; flex: 1; display: flex; align-items: center; justify-content: center; padding: 40px 24px 64px; }
+    .stage { width: 100%; max-width: 460px; }
+
+    .card {
+      position: relative;
+      background: var(--white);
+      border: 1px solid rgba(196,185,168,0.5);
+      border-radius: 14px;
+      padding: 44px 40px 40px;
+      box-shadow: var(--shadow);
+      animation: rise 0.6s var(--ease) both;
+    }
+    @keyframes rise { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
+
+    /* progress dots */
+    .steps { display: flex; gap: 7px; margin-bottom: 26px; }
+    .steps i { height: 3px; flex: 1; border-radius: 3px; background: var(--cream); transition: background 0.4s var(--ease); }
+    .steps i.on { background: var(--tan); }
+
+    .eyebrow { font-size: 10.5px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--tan); font-weight: 700; }
+    .card h2 {
+      font-family: 'Spectral', serif;
+      font-weight: 500;
+      font-size: 27px;
+      line-height: 1.18;
+      color: var(--ink);
+      margin-top: 11px;
+      letter-spacing: -0.01em;
+    }
+    .lede { font-size: 14px; color: var(--brown); margin-top: 12px; max-width: 36ch; }
+
+    .field { margin-top: 22px; }
+    .field:first-of-type { margin-top: 28px; }
+    label { display: block; font-size: 11px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink); margin-bottom: 9px; }
+
+    .control {
+      width: 100%;
+      font-family: 'Roboto', sans-serif;
+      font-size: 15px;
+      color: var(--ink);
+      background: #FBF9F5;
+      border: 1px solid var(--lighttan);
+      border-radius: 9px;
+      padding: 13px 15px;
+      transition: border-color 0.18s var(--ease), box-shadow 0.18s var(--ease), background 0.18s var(--ease);
+    }
+    .control::placeholder { color: #B3A998; }
+    .control:focus {
+      outline: none;
+      background: var(--white);
+      border-color: var(--tan);
+      box-shadow: 0 0 0 3px rgba(158,142,122,0.16);
+    }
+    select.control {
+      appearance: none; cursor: pointer;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%239E8E7A' d='M1 1l5 5 5-5'/%3E%3C/svg%3E");
+      background-repeat: no-repeat; background-position: right 15px center; padding-right: 38px;
+    }
+
+    .btn {
+      position: relative;
+      width: 100%;
+      font-family: 'Roboto', sans-serif;
+      font-size: 14px; font-weight: 700; letter-spacing: 0.03em;
+      color: var(--white);
+      background: var(--ink);
+      border: none; border-radius: 9px;
+      padding: 14px;
+      margin-top: 26px;
+      cursor: pointer;
+      overflow: hidden;
+      transition: transform 0.12s var(--ease), background 0.2s var(--ease), opacity 0.2s var(--ease);
+    }
+    .btn:hover { background: #211f1d; }
+    .btn:active { transform: scale(0.985); }
+    .btn:disabled { opacity: 0.55; cursor: not-allowed; }
+    .btn .spin {
+      display: none; width: 15px; height: 15px; margin: 0 auto;
+      border: 2px solid rgba(255,255,255,0.35); border-top-color: var(--white);
+      border-radius: 50%; animation: rot 0.7s linear infinite;
+    }
+    .btn.loading .label { display: none; }
+    .btn.loading .spin { display: block; }
+    @keyframes rot { to { transform: rotate(360deg); } }
+
+    .msg { font-size: 13px; margin-top: 16px; padding: 11px 14px; border-radius: 8px; display: none; line-height: 1.5; }
+    .msg.show { display: block; animation: rise 0.3s var(--ease) both; }
+    .msg.error { background: rgba(181,96,14,0.10); color: var(--amber); border-left: 3px solid var(--amber); }
+
+    /* step transition */
+    .pane { transition: opacity 0.3s var(--ease), transform 0.35s var(--ease); }
+    .pane.leaving { opacity: 0; transform: translateY(-8px); pointer-events: none; }
+    .pane.entering { animation: enter 0.4s var(--ease) both; }
+    @keyframes enter { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    .hidden { display: none; }
+
+    /* success */
+    .done { text-align: center; padding: 8px 0 4px; }
+    .done svg { width: 56px; height: 56px; margin: 0 auto 20px; display: block; }
+    .done .ring { stroke: var(--green); stroke-width: 2.5; fill: none; stroke-dasharray: 151; stroke-dashoffset: 151; animation: draw 0.6s var(--ease) 0.1s forwards; }
+    .done .tick { stroke: var(--green); stroke-width: 2.75; fill: none; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 36; stroke-dashoffset: 36; animation: draw 0.4s var(--ease) 0.55s forwards; }
+    @keyframes draw { to { stroke-dashoffset: 0; } }
+    .done h2 { font-family: 'Spectral', serif; font-weight: 500; font-size: 24px; color: var(--ink); }
+    .done p { font-size: 14px; color: var(--brown); margin-top: 10px; }
+
+    footer { position: relative; z-index: 1; padding: 26px 0 30px; }
+    footer p { font-size: 12px; color: var(--tan); text-align: center; }
+
+    @media (max-width: 520px) {
+      .card { padding: 36px 26px 32px; border-radius: 12px; }
+      .card h2 { font-size: 24px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: 0.001ms !important; transition-duration: 0.001ms !important; }
+    }
+  </style>
+</head>
+<body>
+  <div class="ambient" aria-hidden="true">
+    <span class="orb a"></span>
+    <span class="orb b"></span>
+    <span class="orb c"></span>
+    <span class="orb d"></span>
+    <span class="orb e"></span>
+    <span class="orb f"></span>
+  </div>
+  <div class="topbar">
+    <div class="bar-inner">
+      <svg class="mark" viewBox="0 0 40 40" fill="none" aria-hidden="true">
+        <rect width="40" height="40" rx="9" fill="#2E2B29"/>
+        <path d="M12 26c2.4 0 3.6-1.4 3.6-3.2 0-3.8-6.4-2.6-6.4-6 0-1.7 1.4-3 3.6-3 1.7 0 3 .8 3.5 2.2" stroke="#C4B9A8" stroke-width="1.6" stroke-linecap="round"/>
+        <path d="M20.5 13v13M20.5 13c3.2 0 5.2 2.4 5.2 6.5S23.7 26 20.5 26" stroke="#9E8E7A" stroke-width="1.6" stroke-linecap="round"/>
+        <circle cx="29.5" cy="14" r="1.4" fill="#C4B9A8"/>
+      </svg>
+      <div class="brand">
+        <h1>SARAH KHAN ASSOCIATES</h1>
+        <p>Bridging the translation gap</p>
+      </div>
+    </div>
+  </div>
+
+  <main>
+    <div class="stage">
+      <div class="card">
+        <div class="steps"><i class="on" id="s1"></i><i id="s2"></i></div>
+
+        <!-- Pane 1: gate -->
+        <div class="pane" id="gate">
+          <div class="eyebrow">Thrive by Design Diagnostic</div>
+          <h2>Enter your access code</h2>
+          <p class="lede">Your organisation has been issued a code to begin the diagnostic.</p>
+          <div class="field">
+            <label for="code">Access code</label>
+            <input type="text" id="code" class="control" placeholder="e.g. SKA0000" autocomplete="off" spellcheck="false" />
+          </div>
+          <button class="btn" id="unlock"><span class="label">Continue</span><span class="spin"></span></button>
+          <div class="msg error" id="gateError">That code isn't valid. Please check and try again.</div>
+        </div>
+
+        <!-- Pane 2: form -->
+        <div class="pane hidden" id="formCard">
+          <div class="eyebrow">Thrive by Design Diagnostic</div>
+          <h2>A few quick details</h2>
+          <p class="lede">Under a minute. Your responses go straight to the SKA team.</p>
+
+          <div class="field">
+            <label for="name">Name</label>
+            <input type="text" id="name" class="control" placeholder="Your full name" autocomplete="name" />
+          </div>
+          <div class="field">
+            <label for="org">Organisation</label>
+            <input type="text" id="org" class="control" placeholder="Your company or team" autocomplete="organization" />
+          </div>
+          <div class="field">
+            <label for="comm">How would you describe communication in your team?</label>
+            <select id="comm" class="control">
+              <option value="" disabled selected>Select one</option>
+              <option value="Always clear">Always clear</option>
+              <option value="Usually clear">Usually clear</option>
+              <option value="Sometimes unclear">Sometimes unclear</option>
+              <option value="Often unclear">Often unclear</option>
+            </select>
+          </div>
+
+          <button class="btn" id="submit"><span class="label">Submit responses</span><span class="spin"></span></button>
+          <div class="msg error" id="formError"></div>
+        </div>
+
+        <!-- Pane 3: success -->
+        <div class="pane hidden done" id="successCard">
+          <svg viewBox="0 0 56 56" aria-hidden="true">
+            <circle class="ring" cx="28" cy="28" r="24"/>
+            <path class="tick" d="M18 28.5l7 7 13-14"/>
+          </svg>
+          <h2>Responses received</h2>
+          <p>Thank you. The SKA team has your submission.</p>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer><p>Sarah Khan Associates (Pvt) Ltd. · Karachi</p></footer>
+
+  <script>
+    const ACCESS_CODE = "SKA2026"; // front-end gate for UX; re-validated server-side on submit
+    const $ = (id) => document.getElementById(id);
+
+    function swapPane(fromEl, toEl, onShown) {
+      fromEl.classList.add("leaving");
+      setTimeout(() => {
+        fromEl.classList.add("hidden");
+        fromEl.classList.remove("leaving");
+        toEl.classList.remove("hidden");
+        toEl.classList.add("entering");
+        if (onShown) onShown();
+      }, 280);
+    }
+
+    // ---- Gate ----
+    $("unlock").addEventListener("click", openIfValid);
+    $("code").addEventListener("keydown", (e) => { if (e.key === "Enter") openIfValid(); });
+
+    function openIfValid() {
+      const code = $("code").value.trim();
+      if (code.toUpperCase() === ACCESS_CODE) {
+        $("gateError").classList.remove("show");
+        $("s2").classList.add("on");
+        swapPane($("gate"), $("formCard"), () => $("name").focus());
+      } else {
+        $("gateError").classList.add("show");
+      }
+    }
+
+    // ---- Submit ----
+    $("submit").addEventListener("click", async () => {
+      const name = $("name").value.trim();
+      const organisation = $("org").value.trim();
+      const communication = $("comm").value;
+      const formError = $("formError");
+      formError.classList.remove("show");
+
+      if (!name || !organisation || !communication) {
+        formError.textContent = "Please fill in all three fields before submitting.";
+        formError.classList.add("show");
+        return;
+      }
+
+      const btn = $("submit");
+      btn.disabled = true;
+      btn.classList.add("loading");
+
+      try {
+        const res = await fetch("/api/submit", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ code: ACCESS_CODE, name, organisation, communication }),
+        });
+        const data = await res.json();
+
+        if (res.ok && data.ok) {
+          swapPane($("formCard"), $("successCard"));
+        } else {
+          formError.textContent = data.error || "Something went wrong. Please try again.";
+          formError.classList.add("show");
+          btn.disabled = false;
+          btn.classList.remove("loading");
+        }
+      } catch (err) {
+        formError.textContent = "Network error. Please try again.";
+        formError.classList.add("show");
+        btn.disabled = false;
+        btn.classList.remove("loading");
+      }
+    });
+  </script>
+</body>
+</html>

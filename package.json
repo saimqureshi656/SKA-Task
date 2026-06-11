@@ -1,0 +1,10 @@
+{
+  "name": "ska-diagnostic-task",
+  "version": "1.0.0",
+  "description": "Access-code protected form with email-delivery backend — SKA application task",
+  "type": "module",
+  "private": true,
+  "dependencies": {
+    "nodemailer": "^6.9.0"
+  }
+}
