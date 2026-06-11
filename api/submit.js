@@ -1,7 +1,7 @@
 import nodemailer from "nodemailer";
 
 const ACCESS_CODE = "SKA2026";
-const TO_EMAIL = "saimtraders57@gmail.com";
+const TO_EMAIL = "hello@sarahkhan.co";
 
 export default async function handler(req, res) {
   if (req.method !== "POST") {
